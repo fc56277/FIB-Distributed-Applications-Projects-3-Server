@@ -227,7 +227,7 @@ public class DbAgent {
         query = "SELECT * FROM images where filename like ?";
         This below line, for some reason, doesn't work. Inserting percentage signs should
         be able to find similar documents, however with the Java-version in question, it
-        doesn't do shit. So this is the correct solution, but it won't behave correctly.
+        doesn't nothing. So this is the correct solution, but it won't behave correctly.
         We therefore have to use 'like' directly with the exact name
         String formattedSearchParam = "'%" + searchParam + "%'";
         Therefore, we had to completely rework the code. Instead of SQL + like,
@@ -243,6 +243,25 @@ public class DbAgent {
         return result;
     }
 
+    public Image getImageByTitle(String title) throws SQLException, ParseException {
+        String query;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        try {
+            connector.open();
+            query = "SELECT * FROM images WHERE title = ?";
+            ps = connector.prepareStatement(query);
+            ps.setString(1, title);
+            rs = connector.executeQuery(ps);
+            if (rs.next()) {
+                return Image.fromResultSet(rs);
+            }
+            return null;
+        } finally {
+            connector.closeAll(rs, ps);
+        }
+    }
+    
     public Image getImageById(String id) throws SQLException, ParseException {
         String query;
         PreparedStatement ps = null;
@@ -261,16 +280,40 @@ public class DbAgent {
             connector.closeAll(rs, ps);
         }
     }
-
-    public Image getImageByTitle(String title) throws SQLException, ParseException {
+    
+    // Whats the best way to pass Date or String????
+    public List<Image> getImageByCreationDate(String date) throws SQLException, ParseException {
+//    	List<Image> allImages = this.getAllImages();
+//        List<Image> result = new ArrayList<>();
+//        for (Image image : allImages) {
+//            if (image.getCaptureDate().str.equals(date)) {
+//                result.add(image);
+//            }
+//        }
+//        return result;
+        return null;
+    }
+    
+    public List<Image> getImageByAuthor(String author) throws SQLException, ParseException {
+    	List<Image> allImages = this.getAllImages();
+        List<Image> result = new ArrayList<>();
+        for (Image image : allImages) {
+            if (image.getAuthor().equals(author)) {
+                result.add(image);
+            }
+        }
+        return result;
+    }
+    
+    public Image getImageByKeywords(String keywords) throws SQLException, ParseException {
         String query;
         PreparedStatement ps = null;
         ResultSet rs = null;
         try {
             connector.open();
-            query = "SELECT * FROM images WHERE title = ?";
+            query = "SELECT * FROM images WHERE keywords = ?";
             ps = connector.prepareStatement(query);
-            ps.setString(1, title);
+            ps.setString(1, keywords);
             rs = connector.executeQuery(ps);
             if (rs.next()) {
                 return Image.fromResultSet(rs);
