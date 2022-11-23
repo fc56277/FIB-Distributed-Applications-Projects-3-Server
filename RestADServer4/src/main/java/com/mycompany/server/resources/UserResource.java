@@ -29,6 +29,8 @@ public class UserResource extends BaseResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response loginUser(@FormParam("username") String username,
                               @FormParam("password") String password) {
+        System.out.println("USERNAME VALUE: " + username);
+        System.out.println("PASSWORD VALUE: " + password);
         logger.info("Attempting to login with username: " + username);
         try {
             if (!this.userVerifier.isAuthorized(username, password)) {
@@ -48,6 +50,9 @@ public class UserResource extends BaseResource {
         } catch (NotAuthorizedException e) {
             logger.error("Not-authorized-error thrown in user-login", e);
             return this.error(Response.Status.FORBIDDEN, e);
+        } catch (Exception e) {
+            logger.error("Generic exception occurred", e);
+            return this.error(Response.Status.INTERNAL_SERVER_ERROR, e);
         }
     }
 

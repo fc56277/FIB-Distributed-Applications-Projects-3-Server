@@ -39,6 +39,7 @@ public class Configuration extends Application {
         resources.add(ImageResource.class);
         resources.add(PingResource.class);
         resources.add(UserResource.class);
+        resources.add(ResponseFilter.class);
     }
 
 }
