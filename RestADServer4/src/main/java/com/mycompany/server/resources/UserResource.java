@@ -45,13 +45,13 @@ public class UserResource extends BaseResource {
                     Collections.singletonMap("username", encodedUsername)
             );
         } catch (SQLException e) {
-            logger.error("SQL Error thrown in user-login", e);
+            logger.error("SQL Error thrown in user-login");
             return this.error(Response.Status.INTERNAL_SERVER_ERROR, e);
         } catch (NotAuthorizedException e) {
-            logger.error("Not-authorized-error thrown in user-login", e);
+            logger.error("Not-authorized-error thrown in user-login");
             return this.error(Response.Status.FORBIDDEN, e);
         } catch (Exception e) {
-            logger.error("Generic exception occurred", e);
+            logger.error("Generic exception occurred");
             return this.error(Response.Status.INTERNAL_SERVER_ERROR, e);
         }
     }

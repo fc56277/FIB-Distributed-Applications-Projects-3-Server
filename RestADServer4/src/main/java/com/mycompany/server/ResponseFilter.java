@@ -57,32 +57,11 @@ public class ResponseFilter implements Filter {
             http.addHeader("Access-Control-Allow-Credentials", "true");
             http.addHeader("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT");
         }
-        log("Calling chain.doFilter");
         chain.doFilter(request, response);
-        log("Done calling chain.doFilter");
-        log("Wrapping requests");
         RequestWrapper wrappedRequest = new RequestWrapper((HttpServletRequest) request);
         assert response instanceof HttpServletResponse;
         ResponseWrapper wrappedResponse = new ResponseWrapper((HttpServletResponse) response);
         log("Done wrapping requests");
-
-        Throwable problem = null;
-        log("Calling chain.doFilter with wrapped request/response");
-        try {
-            chain.doFilter(wrappedRequest, wrappedResponse);
-        } catch (Throwable t) {
-            problem = t;
-            t.printStackTrace();
-        }
-        if (problem != null) {
-            if (problem instanceof ServletException) {
-                throw (ServletException) problem;
-            }
-            if (problem instanceof IOException) {
-                throw (IOException) problem;
-            }
-            sendProcessingError(problem, response);
-        }
     }
 
     /**
