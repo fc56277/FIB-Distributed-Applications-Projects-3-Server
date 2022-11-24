@@ -30,8 +30,13 @@ public class DbAgent {
     private final DbConnector connector = new DbConnector();
 
     public void resetTables() {
-        dropImageTable();
-        dropUserTable();
+        // Ignore if tables don't already exist
+        try {
+            dropImageTable();
+        } catch (Exception ignored) {}
+        try {
+            dropUserTable();
+        } catch (Exception ignored) {}
         createTables();
     }
 
