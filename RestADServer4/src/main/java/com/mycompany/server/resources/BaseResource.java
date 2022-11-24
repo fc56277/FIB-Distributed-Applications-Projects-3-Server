@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.net.URI;
 import java.util.Base64;
@@ -39,27 +40,28 @@ public class BaseResource {
     }
 
     protected Response success(Response.Status status, String message) {
-        return buildResponse(status, "message", message).build();
+        return buildResponse(status, "message", message).type(MediaType.APPLICATION_JSON).build();
     }
 
     protected Response success(Response.Status status, Object response) {
-        return buildResponse(status, response).build();
+        return buildResponse(status, response).type(MediaType.APPLICATION_JSON).build();
     }
 
     protected Response success(Response.Status status, Object response, Map<String, String> headerValues) {
-        return buildResponse(status, response, headerValues).build();
+        return buildResponse(status, response, headerValues).type(MediaType.APPLICATION_JSON).build();
     }
 
     protected Response redirect() {
         return Response
                 .status(Response.Status.FORBIDDEN)
                 .entity(toJsonString("message", "User is not authorized"))
+                .type(MediaType.APPLICATION_JSON)
                 .location(URI.create("/"))
                 .build();
     }
 
     protected Response error(Response.Status status, Exception e) {
-        return buildResponse(status, "error", e.getMessage()).build();
+        return buildResponse(status, "error", e.getMessage()).type(MediaType.APPLICATION_JSON).build();
     }
 
     private Response.ResponseBuilder buildResponse(Response.Status status, String key, String message) {
