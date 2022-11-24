@@ -35,11 +35,10 @@ public class Configuration extends Application {
 
 
     private void addRestResourceClasses(Set<Class<?>> resources) {
-        resources.add(BaseResource.class);
-        resources.add(ImageResource.class);
-        resources.add(PingResource.class);
-        resources.add(UserResource.class);
-        resources.add(ResponseFilter.class);
+        resources.add(com.mycompany.server.resources.AdminResource.class);
+        resources.add(com.mycompany.server.resources.ImageResource.class);
+        resources.add(com.mycompany.server.resources.PingResource.class);
+        resources.add(com.mycompany.server.resources.UserResource.class);
     }
 
 }

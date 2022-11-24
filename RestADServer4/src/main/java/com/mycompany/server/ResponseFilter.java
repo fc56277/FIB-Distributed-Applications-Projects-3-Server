@@ -141,7 +141,9 @@ public class ResponseFilter implements Filter {
   if (response instanceof HttpServletResponse) {
    log("Adding headers");
    HttpServletResponse http = (HttpServletResponse) response;
-   http.addHeader("Access-Control-Allow-Origin", "*, ");
+   //http.addHeader("Access-Control-Allow-Origin", "*, ");
+   //http.addHeader("Access-Control-Allow-Origin", "*");
+   //http.addHeader("Access-Control-Allow-Origin", "http://localhost:8080/RestAD-1.0-SNAPSHOT/api/user/login");
    http.addHeader("Access-Control-Allow-Credentials", "true");
    http.addHeader("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT");
   }
