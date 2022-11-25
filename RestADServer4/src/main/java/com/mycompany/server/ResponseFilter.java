@@ -57,6 +57,7 @@ public class ResponseFilter implements Filter {
             http.addHeader("Access-Control-Allow-Credentials", "true");
             http.addHeader("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT");
             http.addHeader("Access-Control-Allow-Headers", "*");
+            http.addHeader("Access-Control-Expose-Headers", "*");
         }
         chain.doFilter(request, response);
         RequestWrapper wrappedRequest = new RequestWrapper((HttpServletRequest) request);
