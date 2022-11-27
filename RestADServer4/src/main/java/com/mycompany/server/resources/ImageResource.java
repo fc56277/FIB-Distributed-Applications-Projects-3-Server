@@ -259,15 +259,15 @@ public class ImageResource extends BaseResource {
         logger.info("Authorization successful. Starting parsing");
         try {
         	List<Image> image = dbAgent.searchImageByTitle(title);
-        	return success(Response.Status.OK, image);
+        	return this.success(Response.Status.OK, image);
         } catch (NotAuthorizedException e) {
-            logger.error("Not authorized error thrown in deleteImage");
+            logger.error("Not authorized error thrown in searchTitle");
             return this.error(Response.Status.FORBIDDEN, e);
         } catch (ParseException e) {
-            logger.error("Parse error thrown in deleteImage", e);
+            logger.error("Parse error thrown in searchTitle", e);
             return this.error(Response.Status.BAD_REQUEST, e);
         } catch (SQLException e) {
-            logger.error("SQL error thrown in deleteImage", e);
+            logger.error("SQL error thrown in searchTitle", e);
             return this.error(Response.Status.INTERNAL_SERVER_ERROR, e);
         }
     }
