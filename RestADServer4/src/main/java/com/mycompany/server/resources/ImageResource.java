@@ -45,6 +45,7 @@ public class ImageResource extends BaseResource {
                                   @FormParam("file") String base64) {
         logger.info("Calling register image.");
         if (isUnauthorized(headers)) {
+            logger.info("User is unauthorized - returning redirect");
             return this.redirect();
         }
         try {
@@ -227,8 +228,8 @@ public class ImageResource extends BaseResource {
         }
         logger.info("Authorization successful. Starting parsing");
         try {
-        	Image image = dbAgent.getImageById(String.valueOf(id));
-        	return success(Response.Status.OK, image);
+            Image image = dbAgent.getImageById(String.valueOf(id));
+            return success(Response.Status.OK, image);
         } catch (NotAuthorizedException e) {
             logger.error("Not authorized error thrown in deleteImage");
             return this.error(Response.Status.FORBIDDEN, e);
@@ -258,8 +259,8 @@ public class ImageResource extends BaseResource {
         }
         logger.info("Authorization successful. Starting parsing");
         try {
-        	List<Image> image = dbAgent.searchImageByTitle(title);
-        	return this.success(Response.Status.OK, image);
+            List<Image> image = dbAgent.searchImageByTitle(title);
+            return this.success(Response.Status.OK, image);
         } catch (NotAuthorizedException e) {
             logger.error("Not authorized error thrown in searchTitle");
             return this.error(Response.Status.FORBIDDEN, e);
@@ -290,8 +291,8 @@ public class ImageResource extends BaseResource {
         }
         logger.info("Authorization successful. Starting parsing");
         try {
-        		List<Image> images = dbAgent.getImageByCreationDate(date);
-        	return success(Response.Status.OK, images);
+            List<Image> images = dbAgent.getImageByCreationDate(date);
+            return success(Response.Status.OK, images);
         } catch (NotAuthorizedException e) {
             logger.error("Not authorized error thrown in deleteImage");
             return this.error(Response.Status.FORBIDDEN, e);
@@ -321,8 +322,8 @@ public class ImageResource extends BaseResource {
         }
         logger.info("Authorization successful. Starting parsing");
         try {
-        	List<Image> images = dbAgent.getImageByAuthor(author);
-        	return success(Response.Status.OK, images);
+            List<Image> images = dbAgent.getImageByAuthor(author);
+            return success(Response.Status.OK, images);
         } catch (NotAuthorizedException e) {
             logger.error("Not authorized error thrown in deleteImage");
             return this.error(Response.Status.FORBIDDEN, e);
@@ -352,8 +353,8 @@ public class ImageResource extends BaseResource {
         }
         logger.info("Authorization successful. Starting parsing");
         try {
-        	Image image = dbAgent.getImageByKeywords(keywords);
-        	return success(Response.Status.OK, image);
+            Image image = dbAgent.getImageByKeywords(keywords);
+            return success(Response.Status.OK, image);
         } catch (NotAuthorizedException e) {
             logger.error("Not authorized error thrown in deleteImage");
             return this.error(Response.Status.FORBIDDEN, e);
