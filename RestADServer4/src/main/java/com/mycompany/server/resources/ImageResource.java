@@ -44,7 +44,7 @@ public class ImageResource extends BaseResource {
                                   @FormParam("capture") String captureDateString,
                                   @FormParam("file") String base64) {
         logger.info("Calling register image.");
-        if (isUnauthorized(headers)) {
+        if (!isAuthorized(headers)) {
             logger.info("User is unauthorized - returning redirect");
             return this.redirect();
         }
@@ -95,7 +95,7 @@ public class ImageResource extends BaseResource {
                                 @FormParam("capture") String captureDateString,
                                 @FormParam("file") String base64) {
         logger.info("Calling update image.");
-        if (isUnauthorized(headers)) {
+        if (!isAuthorized(headers)) {
             return this.redirect();
         }
         try {
@@ -157,7 +157,7 @@ public class ImageResource extends BaseResource {
                                 @FormParam("id") String id,
                                 @FormParam("creator") String creator) {
         logger.info("Calling delete image.");
-        if (isUnauthorized(headers)) {
+        if (!isAuthorized(headers)) {
             return this.redirect();
         }
         logger.info("Login successful. Starting deletion");
@@ -192,7 +192,7 @@ public class ImageResource extends BaseResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response listImages(@Context HttpHeaders headers) {
         logger.info("Calling list images.");
-        if (isUnauthorized(headers)) {
+        if (!isAuthorized(headers)) {
             return this.redirect();
         }
         logger.info("Authorization successful. Starting parsing");
@@ -223,7 +223,7 @@ public class ImageResource extends BaseResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response searchByID(@Context HttpHeaders headers, @PathParam("id") int id) {
         logger.info("Calling search by ID.");
-        if (isUnauthorized(headers)) {
+        if (!isAuthorized(headers)) {
             return this.redirect();
         }
         logger.info("Authorization successful. Starting parsing");
@@ -254,7 +254,7 @@ public class ImageResource extends BaseResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response searchByTitle(@Context HttpHeaders headers, @PathParam("title") String title) {
         logger.info("Calling search by title.");
-        if (isUnauthorized(headers)) {
+        if (!isAuthorized(headers)) {
             return this.redirect();
         }
         logger.info("Authorization successful. Starting parsing");
@@ -286,7 +286,7 @@ public class ImageResource extends BaseResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response searchByCreationDate(@Context HttpHeaders headers, @PathParam("date") String date) {
         logger.info("Calling search by creation date.");
-        if (isUnauthorized(headers)) {
+        if (!isAuthorized(headers)) {
             return this.redirect();
         }
         logger.info("Authorization successful. Starting parsing");
@@ -317,7 +317,7 @@ public class ImageResource extends BaseResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response searchByAuthor(@Context HttpHeaders headers, @PathParam("author") String author) {
         logger.info("Calling search by author.");
-        if (isUnauthorized(headers)) {
+        if (!isAuthorized(headers)) {
             return this.redirect();
         }
         logger.info("Authorization successful. Starting parsing");
@@ -348,7 +348,7 @@ public class ImageResource extends BaseResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response searchByKeywords(@Context HttpHeaders headers, @PathParam("keywords") String keywords) {
         logger.info("Calling search by keywords.");
-        if (isUnauthorized(headers)) {
+        if (!isAuthorized(headers)) {
             return this.redirect();
         }
         logger.info("Authorization successful. Starting parsing");

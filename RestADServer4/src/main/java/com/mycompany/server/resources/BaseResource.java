@@ -21,14 +21,13 @@ public class BaseResource {
     protected final UserVerifier userVerifier = new UserVerifier();
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    protected boolean isUnauthorized(HttpHeaders httpHeaders) {
+    protected boolean isAuthorized(HttpHeaders httpHeaders) {
         logger.info("Checking if user is authorized");
         // If we want to get extra points - this verification should be more complicated (JWT)
         if (!httpHeaders.getRequestHeaders().containsKey("username")) {
             logger.info("User is not authorized");
-            return true;
+            return false;
         }
-        logger.info("User is authorized");
         String encodedUsername = httpHeaders.getHeaderString("username");
         String username = new String(Base64.getDecoder().decode(encodedUsername));
         logger.info("Decoded username from header: " + username);
