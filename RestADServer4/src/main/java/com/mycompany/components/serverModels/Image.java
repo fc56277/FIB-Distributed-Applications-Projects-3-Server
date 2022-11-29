@@ -6,6 +6,7 @@ import java.sql.Blob;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.ParseException;
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -20,13 +21,13 @@ public class Image {
     private List<String> keywords;
     private String author;
     private String creator;
-    private Date captureDate;
-    private Date storageDate;
+    private LocalDate captureDate;
+    private LocalDate storageDate;
     private String base64;
 
     public Image(String title, String description, List<String> keywords,
-                 String author, String creator, Date captureDate,
-                 Date storageDate, String base64) {
+                 String author, String creator, LocalDate captureDate,
+                 LocalDate storageDate, String base64) {
         this.title = title;
         this.description = description;
         this.keywords = keywords;
@@ -85,19 +86,19 @@ public class Image {
         this.creator = creator;
     }
 
-    public Date getCaptureDate() {
+    public LocalDate getCaptureDate() {
         return captureDate;
     }
 
-    public void setCaptureDate(Date captureDate) {
+    public void setCaptureDate(LocalDate captureDate) {
         this.captureDate = captureDate;
     }
 
-    public Date getStorageDate() {
+    public LocalDate getStorageDate() {
         return storageDate;
     }
 
-    public void setStorageDate(Date storageDate) {
+    public void setStorageDate(LocalDate storageDate) {
         this.storageDate = storageDate;
     }
 
@@ -110,8 +111,8 @@ public class Image {
     }
 
     public static Image newInstance(String title, String description,
-                                    List<String> keywords, String author, String creator, Date captureDate,
-                                    Date storageDate, String base64) {
+                                    List<String> keywords, String author, String creator, LocalDate captureDate,
+                                    LocalDate storageDate, String base64) {
         return new Image(title,
                 description,
                 keywords,
@@ -125,8 +126,8 @@ public class Image {
     public static Image fromResultSet(ResultSet rs) throws SQLException, ParseException {
         List<String> keywords = Arrays
                 .asList(rs.getString("keywords").split("\\s*,\\s*"));
-        Date captureDate = ImageFileUtils.dateFormatter.parse(rs.getString("capture_date"));
-        Date storageDate = ImageFileUtils.dateFormatter.parse(rs.getString("storage_date"));
+        LocalDate captureDate = LocalDate.parse(rs.getString("capture_date"), ImageFileUtils.dateFormatter);
+        LocalDate storageDate = LocalDate.parse(rs.getString("storage_date"), ImageFileUtils.dateFormatter);
         Blob blob = rs.getBlob("base64");
         byte[] blobData = blob.getBytes(1, (int) blob.length());
         String base64 = new String(blobData);

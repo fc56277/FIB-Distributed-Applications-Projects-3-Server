@@ -12,12 +12,13 @@ import java.io.InputStream;
 import java.net.URL;
 import java.nio.file.Files;
 import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.Base64;
 
 public class ImageFileUtils {
 
-    public static final SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd");
+    public static final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
     public static File getFile(String filename) throws IllegalStateException, IllegalArgumentException {
         ClassLoader classloader = Thread.currentThread().getContextClassLoader();

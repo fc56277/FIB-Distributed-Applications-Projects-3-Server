@@ -10,6 +10,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.sql.SQLException;
 import java.text.ParseException;
+import java.time.LocalDate;
 import java.util.*;
 
 @Path("/image")
@@ -23,7 +24,6 @@ public class ImageResource extends BaseResource {
      * @param description Description of image
      * @param keywords Image tags
      * @param author Author of image
-     * @param creator Creator of image
      * @param captureDateString Date when image was captured
      * @param base64 Base64 encoding of the image
      * @return Response with either success, or indicated error
@@ -47,8 +47,8 @@ public class ImageResource extends BaseResource {
         try {
             logger.info("User authorized. Starting parsing of data.");
             String creator = new String(Base64.getDecoder().decode(headers.getHeaderString("username")));
-            Date captureDate = ImageFileUtils.dateFormatter.parse(captureDateString);
-            Date storageDate = new Date();
+            LocalDate captureDate = LocalDate.parse(captureDateString, ImageFileUtils.dateFormatter);
+            LocalDate storageDate = LocalDate.now();
             dbAgent.insertImage(
                     title, description,
                     Arrays.asList(keywords.split("\\s*,\\s*")),
@@ -57,9 +57,6 @@ public class ImageResource extends BaseResource {
                     base64);
             logger.info("Image registration successful");
             return this.success(Response.Status.CREATED, "Succesfully registered image.");
-        } catch (ParseException e) {
-            logger.error("Parse error thrown in registerImage", e);
-            return this.error(Response.Status.BAD_REQUEST, e);
         } catch (SQLException e) {
             logger.error("SQL error thrown in registerImage", e);
             return this.error(Response.Status.INTERNAL_SERVER_ERROR, e);
@@ -113,13 +110,13 @@ public class ImageResource extends BaseResource {
                 image.setAuthor(author);
             }
             if (captureDateString != null) {
-                Date captureDate = ImageFileUtils.dateFormatter.parse(captureDateString);
+                LocalDate captureDate = LocalDate.parse(captureDateString, ImageFileUtils.dateFormatter);
                 image.setCaptureDate(captureDate);
             }
             if (base64 != null) {
                 image.setBase64(base64);
             }
-            dbAgent.updateImage(id, image);
+            dbAgent.updateImage(Integer.parseInt(id), image);
             logger.info("Image update successful");
             return this.success(Response.Status.OK, "Succesfully updated image.");
         } catch (BadRequestException e) {
@@ -158,7 +155,7 @@ public class ImageResource extends BaseResource {
                 logger.info("Denying deletion - user unauthorized.");
                 throw new NotAuthorizedException("User is not creator of picture.");
             }
-            dbAgent.deleteImageById(id);
+            dbAgent.deleteImageById(Integer.parseInt(id));
             return success(Response.Status.OK, "Successfully deleted image.");
         } catch (NotAuthorizedException e) {
             logger.error("Not authorized error thrown in deleteImage");
@@ -282,8 +279,8 @@ public class ImageResource extends BaseResource {
         }
         logger.info("Authorization successful. Starting parsing");
         try {
-            Date date1 = new Date();
-            List<Image> images = dbAgent.searchImageByCreationDate(date1);
+            LocalDate searchDate = LocalDate.parse(date, ImageFileUtils.dateFormatter);
+            List<Image> images = dbAgent.searchImageByCreationDate(searchDate);
             return success(Response.Status.OK, images);
         } catch (NotAuthorizedException e) {
             logger.error("Not authorized error thrown in deleteImage");

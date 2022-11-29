@@ -18,6 +18,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
@@ -169,8 +170,8 @@ public class DbAgent {
         String query;
         PreparedStatement ps = null;
         try {
-            Date captureDate = image.getCaptureDate();
-            Date now = new Date();
+            LocalDate captureDate = image.getCaptureDate();
+            LocalDate now = LocalDate.now();
             connector.open();
             query = "insert into images" +
                     "(title, description, keywords, author, creator, capture_date, storage_date, base64)" +
@@ -197,8 +198,8 @@ public class DbAgent {
             List<String> keywords,
             String author,
             String creator,
-            Date captureDate,
-            Date storageDate,
+            LocalDate captureDate,
+            LocalDate storageDate,
             String base64) throws SQLException {
         insertImage(Image.newInstance(
                 title,
@@ -256,12 +257,12 @@ public class DbAgent {
                 .collect(Collectors.toList());
     }
 
-    public List<Image> searchImageByCreationDate(Date date) throws SQLException, ParseException {
+    public List<Image> searchImageByCreationDate(LocalDate date) throws SQLException, ParseException {
         // Apply search by getting all images where the date is +- 1 month of the input
-        Date startDate = Date.from(Instant.from(LocalDateTime.from(date.toInstant()).minusMonths(1)));
-        Date endDate = Date.from(Instant.from(LocalDateTime.from(date.toInstant()).plusMonths(1)));
+        LocalDate startDate = date.minusMonths(1);
+        LocalDate endDate = date.plusMonths(1);
         return this.getAllImages().stream()
-                .filter(image -> image.getCaptureDate().after(startDate) && image.getCaptureDate().before(endDate))
+                .filter(image -> image.getCaptureDate().isAfter(startDate) && image.getCaptureDate().isBefore(endDate))
                 .collect(Collectors.toList());
     }
 
@@ -293,20 +294,20 @@ public class DbAgent {
         }
     }
 
-    public void updateImage(String id, Image image) throws SQLException {
+    public void updateImage(int id, Image image) throws SQLException {
         // Inefficient, but easy and saves time ¯\_(ツ)_/¯
         this.deleteImageById(id);
         this.insertImage(image);
     }
 
-    public void deleteImageById(String id) throws SQLException {
+    public void deleteImageById(int id) throws SQLException {
         String query;
         PreparedStatement ps = null;
         try {
             connector.open();
-            query = "DELETE * FROM images WHERE id = ?";
+            query = "DELETE FROM images WHERE id = ?";
             ps = connector.prepareStatement(query);
-            ps.setString(1, id);
+            ps.setInt(1, id);
             connector.executeUpdate(ps);
         } catch (SQLException e) {
             logger.error("Failed to delete image.", e);
