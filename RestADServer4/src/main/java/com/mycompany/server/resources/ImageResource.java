@@ -100,7 +100,7 @@ public class ImageResource extends BaseResource {
         }
         try {
             logger.info("Authorization successful. Starting parsing");
-            Image image = dbAgent.getImageById(id);
+            Image image = dbAgent.getImageById(Integer.parseInt(id));
             if (image == null) {
                 throw new BadRequestException("No image found with given ID");
             }
@@ -162,7 +162,7 @@ public class ImageResource extends BaseResource {
         }
         logger.info("Login successful. Starting deletion");
         try {
-            Image image = dbAgent.getImageById(id);
+            Image image = dbAgent.getImageById(Integer.parseInt(id));
             if (!Objects.equals(image.getCreator(), creator)) {
                 logger.info("Denying deletion - user unauthorized.");
                 throw new NotAuthorizedException("User is not creator of picture.");
@@ -221,14 +221,14 @@ public class ImageResource extends BaseResource {
     @Path("searchID/{id}")
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response searchByID(@Context HttpHeaders headers, @PathParam("id") int id) {
+    public Response searchByID(@Context HttpHeaders headers, @PathParam("id") String id) {
         logger.info("Calling search by ID.");
         if (!isAuthorized(headers)) {
             return this.redirect();
         }
         logger.info("Authorization successful. Starting parsing");
         try {
-            Image image = dbAgent.getImageById(String.valueOf(id));
+            Image image = dbAgent.getImageById(Integer.parseInt(id));
             return success(Response.Status.OK, image);
         } catch (NotAuthorizedException e) {
             logger.error("Not authorized error thrown in deleteImage");

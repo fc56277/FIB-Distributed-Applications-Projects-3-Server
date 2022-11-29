@@ -12,6 +12,8 @@ import java.util.List;
 
 public class Image {
 
+    private int id;
+
     // TITLE, DESCRIPTION, KEYWORDS, AUTHOR, CREATOR, CAPTURE_DATE, STORAGE_DATE, FILENAME
     private String title;
     private String description;
@@ -33,6 +35,14 @@ public class Image {
         this.captureDate = captureDate;
         this.storageDate = storageDate;
         this.base64 = base64;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getTitle() {
@@ -120,7 +130,7 @@ public class Image {
         Blob blob = rs.getBlob("base64");
         byte[] blobData = blob.getBytes(1, (int) blob.length());
         String base64 = new String(blobData);
-        return Image.newInstance(
+        Image result = Image.newInstance(
                 rs.getString("title"),
                 rs.getString("description"),
                 keywords,
@@ -130,5 +140,7 @@ public class Image {
                 storageDate,
                 base64
         );
+        result.setId(rs.getInt("id"));
+        return result;
     }
 }

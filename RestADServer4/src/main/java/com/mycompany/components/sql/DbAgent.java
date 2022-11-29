@@ -267,7 +267,7 @@ public class DbAgent {
         }
     }
     
-    public Image getImageById(String id) throws SQLException, ParseException {
+    public Image getImageById(int id) throws SQLException, ParseException {
         String query;
         PreparedStatement ps = null;
         ResultSet rs = null;
@@ -275,7 +275,7 @@ public class DbAgent {
             connector.open();
             query = "SELECT * FROM images WHERE id = ?";
             ps = connector.prepareStatement(query);
-            ps.setString(1, id);
+            ps.setInt(1, id);
             rs = connector.executeQuery(ps);
             if (rs.next()) {
                 return Image.fromResultSet(rs);
