@@ -17,6 +17,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.ParseException;
+import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -255,7 +257,12 @@ public class DbAgent {
     }
 
     public List<Image> searchImageByCreationDate(Date date) throws SQLException, ParseException {
-        return null;
+        // Apply search by getting all images where the date is +- 1 month of the input
+        Date startDate = Date.from(Instant.from(LocalDateTime.from(date.toInstant()).minusMonths(1)));
+        Date endDate = Date.from(Instant.from(LocalDateTime.from(date.toInstant()).plusMonths(1)));
+        return this.getAllImages().stream()
+                .filter(image -> image.getCaptureDate().after(startDate) && image.getCaptureDate().before(endDate))
+                .collect(Collectors.toList());
     }
 
     public List<Image> searchByKeywords(List<String> keywords) throws SQLException, ParseException {
