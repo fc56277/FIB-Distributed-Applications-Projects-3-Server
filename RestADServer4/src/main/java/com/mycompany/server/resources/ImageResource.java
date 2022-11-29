@@ -96,6 +96,11 @@ public class ImageResource extends BaseResource {
             if (image == null) {
                 throw new BadRequestException("No image found with given ID");
             }
+            String creator = new String(Base64.getDecoder().decode(headers.getHeaderString("username")));
+            if (!Objects.equals(image.getCreator(), creator)) {
+                logger.info("Denying deletion - user unauthorized.");
+                throw new NotAuthorizedException("User is not authorized to modify image.");
+            }
             if (!Objects.equals(title, "null")) {
                 image.setTitle(title);
             }
