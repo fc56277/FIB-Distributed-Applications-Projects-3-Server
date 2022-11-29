@@ -96,24 +96,24 @@ public class ImageResource extends BaseResource {
             if (image == null) {
                 throw new BadRequestException("No image found with given ID");
             }
-            if (title != null) {
+            if (!Objects.equals(title, "null")) {
                 image.setTitle(title);
             }
-            if (description != null) {
+            if (!Objects.equals(description, "null")) {
                 image.setDescription(description);
             }
-            if (keywords != null) {
+            if (!Objects.equals(keywords, "null")) {
                 List<String> keywordsList = Arrays.asList(keywords.split("\\s*,\\s*"));
                 image.setKeywords(keywordsList);
             }
-            if (author != null) {
+            if (!Objects.equals(author, "null")) {
                 image.setAuthor(author);
             }
-            if (captureDateString != null) {
+            if (!Objects.equals(captureDateString, "null")) {
                 LocalDate captureDate = LocalDate.parse(captureDateString, ImageFileUtils.dateFormatter);
                 image.setCaptureDate(captureDate);
             }
-            if (base64 != null) {
+            if (!Objects.equals(base64, "null")) {
                 image.setBase64(base64);
             }
             dbAgent.updateImage(Integer.parseInt(id), image);
