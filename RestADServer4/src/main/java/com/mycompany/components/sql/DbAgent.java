@@ -244,13 +244,13 @@ public class DbAgent {
         Shitty and suboptimal solution, but working one.
         */
         return this.getAllImages().stream()
-                .filter(image -> StringSimilarity.similarity(image.getTitle(), title) >= 0.3)
+                .filter(image -> image.getTitle().toLowerCase().contains(title.toLowerCase()))
                 .collect(Collectors.toList());
     }
 
     public List<Image> searchByAuthor(String author) throws SQLException, ParseException {
         return this.getAllImages().stream()
-                .filter(image -> image.getAuthor().contains(author))
+                .filter(image -> image.getAuthor().toLowerCase().contains(author.toLowerCase()))
                 .collect(Collectors.toList());
     }
 
@@ -262,7 +262,8 @@ public class DbAgent {
         // Return all images where the keywords share at least one common word as the input
         return this.getAllImages().stream()
                 .filter(image -> image.getKeywords().stream()
-                        .anyMatch(keyword -> keywords.stream().anyMatch(keyword::contains)))
+                        .anyMatch(keyword -> keywords.stream()
+                                .anyMatch(kw -> keyword.toLowerCase().contains(kw.toLowerCase()))))
                 .collect(Collectors.toList());
     }
 
