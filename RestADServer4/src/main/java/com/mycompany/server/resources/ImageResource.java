@@ -10,10 +10,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.sql.SQLException;
 import java.text.ParseException;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @Path("/image")
 public class ImageResource extends BaseResource {
@@ -40,7 +37,6 @@ public class ImageResource extends BaseResource {
                                   @FormParam("description") String description,
                                   @FormParam("keywords") String keywords,
                                   @FormParam("author") String author,
-                                  @FormParam("creator") String creator,
                                   @FormParam("capture") String captureDateString,
                                   @FormParam("file") String base64) {
         logger.info("Calling register image.");
@@ -50,6 +46,7 @@ public class ImageResource extends BaseResource {
         }
         try {
             logger.info("User authorized. Starting parsing of data.");
+            String creator = new String(Base64.getDecoder().decode(headers.getHeaderString("username")));
             Date captureDate = ImageFileUtils.dateFormatter.parse(captureDateString);
             Date storageDate = new Date();
             dbAgent.insertImage(
@@ -77,7 +74,6 @@ public class ImageResource extends BaseResource {
      * @param description Description of image
      * @param keywords Image tags
      * @param author Author of image
-     * @param creator Creator of image (used to check for ownership)
      * @param captureDateString Date when image was captured
      * @return Response with either success, or indicated error
      */
@@ -91,7 +87,6 @@ public class ImageResource extends BaseResource {
                                 @FormParam("description") String description,
                                 @FormParam("keywords") String keywords,
                                 @FormParam("author") String author,
-                                @FormParam("creator") String creator,
                                 @FormParam("capture") String captureDateString,
                                 @FormParam("file") String base64) {
         logger.info("Calling update image.");
@@ -116,9 +111,6 @@ public class ImageResource extends BaseResource {
             }
             if (author != null) {
                 image.setAuthor(author);
-            }
-            if (creator != null) {
-                image.setCreator(creator);
             }
             if (captureDateString != null) {
                 Date captureDate = ImageFileUtils.dateFormatter.parse(captureDateString);
@@ -146,7 +138,6 @@ public class ImageResource extends BaseResource {
      * POST method to delete an existing image
      *
      * @param id ID of image to delete
-     * @param creator Creator of image (used to check for ownership)
      * @return Response with either success, or indicated error
      */
     @POST
@@ -154,14 +145,14 @@ public class ImageResource extends BaseResource {
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Produces(MediaType.APPLICATION_JSON)
     public Response deleteImage(@Context HttpHeaders headers,
-                                @FormParam("id") String id,
-                                @FormParam("creator") String creator) {
+                                @FormParam("id") String id) {
         logger.info("Calling delete image.");
         if (!isAuthorized(headers)) {
             return this.redirect();
         }
         logger.info("Login successful. Starting deletion");
         try {
+            String creator = new String(Base64.getDecoder().decode(headers.getHeaderString("username")));
             Image image = dbAgent.getImageById(Integer.parseInt(id));
             if (!Objects.equals(image.getCreator(), creator)) {
                 logger.info("Denying deletion - user unauthorized.");
@@ -228,8 +219,8 @@ public class ImageResource extends BaseResource {
         }
         logger.info("Authorization successful. Starting parsing");
         try {
-            Image image = dbAgent.getImageById(Integer.parseInt(id));
-            return success(Response.Status.OK, image);
+            List<Image> images = dbAgent.searchImageById(Integer.parseInt(id));
+            return success(Response.Status.OK, images);
         } catch (NotAuthorizedException e) {
             logger.error("Not authorized error thrown in deleteImage");
             return this.error(Response.Status.FORBIDDEN, e);
@@ -259,8 +250,8 @@ public class ImageResource extends BaseResource {
         }
         logger.info("Authorization successful. Starting parsing");
         try {
-            List<Image> image = dbAgent.searchImageByTitle(title);
-            return this.success(Response.Status.OK, image);
+            List<Image> images = dbAgent.searchImageByTitle(title);
+            return this.success(Response.Status.OK, images);
         } catch (NotAuthorizedException e) {
             logger.error("Not authorized error thrown in searchTitle");
             return this.error(Response.Status.FORBIDDEN, e);
@@ -291,7 +282,8 @@ public class ImageResource extends BaseResource {
         }
         logger.info("Authorization successful. Starting parsing");
         try {
-            List<Image> images = dbAgent.getImageByCreationDate(date);
+            Date date1 = new Date();
+            List<Image> images = dbAgent.searchImageByCreationDate(date1);
             return success(Response.Status.OK, images);
         } catch (NotAuthorizedException e) {
             logger.error("Not authorized error thrown in deleteImage");
@@ -322,7 +314,7 @@ public class ImageResource extends BaseResource {
         }
         logger.info("Authorization successful. Starting parsing");
         try {
-            List<Image> images = dbAgent.getImageByAuthor(author);
+            List<Image> images = dbAgent.searchByAuthor(author);
             return success(Response.Status.OK, images);
         } catch (NotAuthorizedException e) {
             logger.error("Not authorized error thrown in deleteImage");
@@ -353,8 +345,9 @@ public class ImageResource extends BaseResource {
         }
         logger.info("Authorization successful. Starting parsing");
         try {
-            Image image = dbAgent.getImageByKeywords(keywords);
-            return success(Response.Status.OK, image);
+            List<String> keywordsList = Arrays.asList(keywords.split("\\s*,\\s*"));
+            List<Image> images = dbAgent.searchByKeywords(keywordsList);
+            return success(Response.Status.OK, images);
         } catch (NotAuthorizedException e) {
             logger.error("Not authorized error thrown in deleteImage");
             return this.error(Response.Status.FORBIDDEN, e);
