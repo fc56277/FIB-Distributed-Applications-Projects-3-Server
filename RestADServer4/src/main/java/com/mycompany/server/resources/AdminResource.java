@@ -12,6 +12,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Objects;
@@ -49,7 +50,15 @@ public class AdminResource extends BaseResource {
                 logger.info("Created enumeration");
                 for (File file : Objects.requireNonNull(new File(path).listFiles())) {
                     logger.info("First file extracted with name: " + file.getName(), file);
-                    Image image = Image.newInstance(file.getName(), "temp", Collections.singletonList("sup"), "admin", "admin", new Date(), new Date(), password);
+                    Image image = Image.newInstance(
+                            file.getName(),
+                            "temp",
+                            Collections.singletonList("sup"),
+                            "admin",
+                            "admin",
+                            LocalDate.now(),
+                            LocalDate.now(),
+                            password);
                     String base64 = ImageFileUtils.getBase64File(file);
                     image.setBase64(base64);
                     logger.info("Successfully created the image.");
